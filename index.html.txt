@@ -1,0 +1,2106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXTECH MOBILE LIMITED | 旗舰手机与充电宝 | 高品质移动设备</title>
+    <meta name="description" content="NEXTECH MOBILE LIMITED 提供高品质N16和N25旗舰手机，以及NTC1和NTC2大容量充电宝。黑、白、金、灰多种颜色可选。">
+    <meta name="keywords" content="NEXTECH, N16手机, N25手机, NTC1充电宝, NTC2充电宝, 旗舰手机, 大容量充电宝, 尼日利亚手机">
+    <meta name="author" content="NEXTECH MOBILE LIMITED">
+    <meta property="og:title" content="NEXTECH MOBILE LIMITED | 高品质移动设备">
+    <meta property="og:description" content="专业销售N16和N25旗舰手机，NTC1和NTC2大容量充电宝">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80">
+    <meta property="og:url" content="https://nextechmobile.com">
+    <meta name="twitter:card" content="summary_large_image">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 基础样式 */
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #e74c3c;
+            --accent-color: #3498db;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --text-color: #333;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --success-color: #27ae60;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            color: var(--text-color);
+            line-height: 1.6;
+            background-color: #f9f9f9;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 头部导航 */
+        header {
+            background-color: white;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            color: var(--secondary-color);
+            font-size: 28px;
+            margin-right: 10px;
+        }
+        
+        .logo h1 {
+            font-size: 24px;
+            color: var(--primary-color);
+        }
+        
+        .logo span {
+            color: var(--secondary-color);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            align-items: center;
+        }
+        
+        nav ul li {
+            margin-left: 25px;
+        }
+        
+        nav ul li a {
+            text-decoration: none;
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            color: var(--secondary-color);
+        }
+        
+        /* 语言切换按钮 */
+        .language-switcher {
+            display: flex;
+            align-items: center;
+            margin-left: 20px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        
+        .lang-btn {
+            background: none;
+            border: none;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .lang-btn.active {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        .lang-btn:not(.active):hover {
+            background-color: #f5f5f5;
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--primary-color);
+            cursor: pointer;
+        }
+        
+        /* 英雄区域 */
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 100px 20px;
+        }
+        
+        .hero h2 {
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+        
+        .hero p {
+            font-size: 18px;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background-color: #c0392b;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-secondary {
+            background-color: var(--accent-color);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+        }
+        
+        .btn-success:hover {
+            background-color: #219653;
+        }
+        
+        /* 产品区域 */
+        .section-title {
+            text-align: center;
+            margin: 60px 0 40px;
+        }
+        
+        .section-title h2 {
+            font-size: 32px;
+            color: var(--primary-color);
+            position: relative;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+        
+        .section-title h2:after {
+            content: '';
+            position: absolute;
+            width: 70px;
+            height: 3px;
+            background-color: var(--secondary-color);
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+        
+        .product-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+            position: relative;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .product-img {
+            height: 200px;
+            background-color: #f1f1f1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            color: #ccc;
+            position: relative;
+        }
+        
+        .product-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .product-content {
+            padding: 20px;
+        }
+        
+        .product-content h3 {
+            font-size: 22px;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+        
+        .color-options {
+            display: flex;
+            margin: 15px 0;
+        }
+        
+        .color-circle {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            margin-right: 10px;
+            border: 2px solid #eee;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .color-circle:hover {
+            transform: scale(1.1);
+        }
+        
+        .color-black { background-color: #333; }
+        .color-white { background-color: #f5f5f5; }
+        .color-gold { background-color: #ffd700; }
+        .color-grey { background-color: #808080; }
+        
+        /* 产品对比区域 */
+        .comparison-section {
+            background-color: #f8f9fa;
+            padding: 60px 0;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            margin-bottom: 40px;
+        }
+        
+        .comparison-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .comparison-table th {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+        
+        .comparison-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .comparison-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .comparison-table tr:hover {
+            background-color: #f1f1f1;
+        }
+        
+        .feature-check {
+            color: var(--success-color);
+            font-weight: bold;
+        }
+        
+        .feature-unavailable {
+            color: #999;
+        }
+        
+        /* 客户评价区域 */
+        .testimonials-section {
+            background-color: white;
+            padding: 60px 0;
+        }
+        
+        .testimonials-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .testimonial-card {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+        
+        .testimonial-card:before {
+            content: "❝";
+            font-size: 40px;
+            color: var(--accent-color);
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            opacity: 0.3;
+        }
+        
+        .testimonial-text {
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+        
+        .testimonial-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 20px;
+            color: #777;
+        }
+        
+        .rating {
+            color: #ffc107;
+            margin-bottom: 5px;
+        }
+        
+        /* 地址和地图区域 */
+        .address-section {
+            background-color: white;
+            padding: 60px 0;
+        }
+        
+        .address-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+        
+        .address-info {
+            padding: 20px;
+        }
+        
+        .address-info h3 {
+            font-size: 28px;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        
+        .address-details {
+            margin-bottom: 30px;
+        }
+        
+        .address-details p {
+            margin-bottom: 15px;
+            font-size: 17px;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .address-details i {
+            color: var(--accent-color);
+            margin-right: 15px;
+            font-size: 20px;
+            width: 24px;
+        }
+        
+        #map {
+            height: 400px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        
+        /* 联系信息区域 */
+        .contact-section {
+            background-color: var(--light-color);
+            padding: 60px 0;
+        }
+        
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+        
+        .contact-card {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+        
+        .contact-icon {
+            font-size: 40px;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+        }
+        
+        /* 在线咨询悬浮按钮 */
+        .chat-buttons {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        
+        .chat-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        
+        .chat-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+        }
+        
+        .whatsapp-btn {
+            background-color: #25D366;
+        }
+        
+        .messenger-btn {
+            background-color: #0084FF;
+        }
+        
+        .chat-button span {
+            position: absolute;
+            right: 70px;
+            background-color: white;
+            color: var(--primary-color);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .chat-button:hover span {
+            opacity: 1;
+        }
+        
+        /* 视频展示区域 */
+        .video-section {
+            background-color: #f8f9fa;
+            padding: 60px 0;
+        }
+        
+        .video-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .video-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        
+        .video-placeholder {
+            height: 200px;
+            background-color: #222;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 60px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .video-placeholder:hover {
+            background-color: #333;
+        }
+        
+        .video-info {
+            padding: 20px;
+        }
+        
+        /* 页脚 */
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 40px 0 20px;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+        
+        .footer-column {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 30px;
+        }
+        
+        .footer-column h3 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: white;
+        }
+        
+        .social-links {
+            display: flex;
+            margin-top: 20px;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            margin-right: 10px;
+            color: white;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        
+        .social-links a:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 14px;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 992px) {
+            .address-container {
+                grid-template-columns: 1fr;
+            }
+            
+            #map {
+                height: 350px;
+            }
+            
+            .comparison-table {
+                overflow-x: auto;
+            }
+            
+            .comparison-table table {
+                min-width: 800px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-container {
+                flex-wrap: wrap;
+            }
+            
+            nav {
+                width: 100%;
+                display: none;
+                margin-top: 15px;
+            }
+            
+            nav.active {
+                display: block;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            nav ul li {
+                margin: 10px 0;
+                margin-left: 0;
+            }
+            
+            .language-switcher {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h2 {
+                font-size: 32px;
+            }
+            
+            .hero p {
+                font-size: 16px;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+            }
+            
+            .chat-buttons {
+                bottom: 20px;
+                right: 20px;
+            }
+            
+            .chat-button span {
+                display: none;
+            }
+        }
+        
+        /* 新手教程区域 */
+        .tutorial-section {
+            background-color: white;
+            padding: 60px 0;
+            margin-top: 40px;
+        }
+        
+        .tutorial-box {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 30px;
+            margin-top: 30px;
+            border-left: 5px solid var(--accent-color);
+        }
+        
+        .tutorial-box h3 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+        
+        .step {
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px dashed #ddd;
+        }
+        
+        .step:last-child {
+            border-bottom: none;
+        }
+        
+        .step-number {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        
+        /* 产品详情模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 10px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        /* 语言指示器 */
+        .lang-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: var(--shadow);
+            z-index: 100;
+            display: none;
+        }
+        
+        .lang-indicator.show {
+            display: block;
+            animation: fadeInOut 3s ease;
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(20px); }
+            20% { opacity: 1; transform: translateY(0); }
+            80% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(20px); }
+        }
+        
+        /* 视频模态框 */
+        .video-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 1100;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .video-modal.active {
+            display: flex;
+        }
+        
+        .video-modal-content {
+            width: 90%;
+            max-width: 800px;
+            position: relative;
+        }
+        
+        .video-modal-content video {
+            width: 100%;
+            border-radius: 10px;
+        }
+        
+        .close-video-modal {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- 语言切换指示器 -->
+    <div class="lang-indicator" id="langIndicator">语言已切换</div>
+    
+    <!-- 在线咨询悬浮按钮 -->
+    <div class="chat-buttons">
+        <a href="https://wa.me/2348108444311" target="_blank" class="chat-button whatsapp-btn">
+            <i class="fab fa-whatsapp"></i>
+            <span>WhatsApp咨询</span>
+        </a>
+        <a href="https://m.me/MobilNT" target="_blank" class="chat-button messenger-btn">
+            <i class="fab fa-facebook-messenger"></i>
+            <span>Messenger咨询</span>
+        </a>
+    </div>
+    
+    <!-- 头部导航 -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <i class="fas fa-mobile-alt"></i>
+                <h1 data-lang="company_name">NEXTECH <span>MOBILE</span></h1>
+            </div>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <nav id="mainNav">
+                <ul>
+                    <li><a href="#home" data-lang="nav_home">首页</a></li>
+                    <li><a href="#products" data-lang="nav_products">产品</a></li>
+                    <li><a href="#comparison" data-lang="nav_comparison">产品对比</a></li>
+                    <li><a href="#testimonials" data-lang="nav_testimonials">客户评价</a></li>
+                    <li><a href="#videos" data-lang="nav_videos">产品视频</a></li>
+                    <li><a href="#address" data-lang="nav_address">公司地址</a></li>
+                    <li><a href="#contact" data-lang="nav_contact">联系我们</a></li>
+                    <li>
+                        <div class="language-switcher">
+                            <button class="lang-btn active" id="langCn">中文</button>
+                            <button class="lang-btn" id="langEn">English</button>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 英雄区域 -->
+    <section class="hero" id="home">
+        <div class="container">
+            <h2 data-lang="hero_title">NEXTECH MOBILE LIMITED</h2>
+            <p data-lang="hero_desc">我们专注于提供高品质的旗舰手机和大容量充电宝。N16和N25旗舰手机带来卓越性能，NTC系列充电宝提供持久电力。</p>
+            <a href="#products" class="btn" data-lang="hero_btn_products">查看产品</a>
+            <a href="#comparison" class="btn btn-secondary" style="margin-left: 10px;" data-lang="hero_btn_compare">产品对比</a>
+            <a href="#videos" class="btn btn-success" style="margin-left: 10px;" data-lang="hero_btn_videos">观看视频</a>
+        </div>
+    </section>
+
+    <!-- 产品区域 -->
+    <section id="products">
+        <div class="container">
+            <div class="section-title">
+                <h2 data-lang="products_title">我们的产品</h2>
+            </div>
+            
+            <div class="products-grid">
+                <!-- N16 手机 -->
+                <div class="product-card" data-product="n16">
+                    <div class="product-badge" data-lang="product_badge_flagship">旗舰款</div>
+                    <div class="product-img">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <div class="product-content">
+                        <h3 data-lang="product_n16_title">N16 旗舰手机</h3>
+                        <p data-lang="product_n16_desc">高性能旗舰手机，配备顶级摄像头和长续航电池。</p>
+                        <div class="color-options">
+                            <div class="color-circle color-black" title="黑色"></div>
+                            <div class="color-circle color-white" title="白色"></div>
+                            <div class="color-circle color-gold" title="金色"></div>
+                        </div>
+                        <p><strong data-lang="product_colors">可选颜色:</strong> Black, White, Gold</p>
+                        <button class="btn view-details-btn" style="margin-top: 15px; width: 100%;" data-lang="product_view_details">查看详情</button>
+                    </div>
+                </div>
+                
+                <!-- N25 手机 -->
+                <div class="product-card" data-product="n25">
+                    <div class="product-badge" data-lang="product_badge_new">新款</div>
+                    <div class="product-img">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <div class="product-content">
+                        <h3 data-lang="product_n25_title">N25 旗舰手机</h3>
+                        <p data-lang="product_n25_desc">下一代旗舰手机，更强大的处理器和超清显示屏。</p>
+                        <div class="color-options">
+                            <div class="color-circle color-black" title="黑色"></div>
+                            <div class="color-circle color-white" title="白色"></div>
+                            <div class="color-circle color-grey" title="灰色"></div>
+                        </div>
+                        <p><strong data-lang="product_colors">可选颜色:</strong> Black, White, Grey</p>
+                        <button class="btn view-details-btn" style="margin-top: 15px; width: 100%;" data-lang="product_view_details">查看详情</button>
+                    </div>
+                </div>
+                
+                <!-- NTC1 充电宝 -->
+                <div class="product-card" data-product="ntc1">
+                    <div class="product-badge" data-lang="product_badge_portable">便携</div>
+                    <div class="product-img">
+                        <i class="fas fa-battery-full"></i>
+                    </div>
+                    <div class="product-content">
+                        <h3 data-lang="product_ntc1_title">NTC1 充电宝</h3>
+                        <p data-lang="product_ntc1_desc">10000mA 大容量充电宝，轻便易携，支持快充。</p>
+                        <div class="color-options">
+                            <div class="color-circle color-black" title="黑色"></div>
+                            <div class="color-circle color-white" title="白色"></div>
+                        </div>
+                        <p><strong data-lang="product_colors">可选颜色:</strong> Black, White</p>
+                        <button class="btn view-details-btn" style="margin-top: 15px; width: 100%;" data-lang="product_view_details">查看详情</button>
+                    </div>
+                </div>
+                
+                <!-- NTC2 充电宝 -->
+                <div class="product-card" data-product="ntc2">
+                    <div class="product-badge" data-lang="product_badge_highcapacity">高容量</div>
+                    <div class="product-img">
+                        <i class="fas fa-charging-station"></i>
+                    </div>
+                    <div class="product-content">
+                        <h3 data-lang="product_ntc2_title">NTC2 充电宝</h3>
+                        <p data-lang="product_ntc2_desc">20000mA 超大容量充电宝，可为多个设备同时充电。</p>
+                        <div class="color-options">
+                            <div class="color-circle color-black" title="黑色"></div>
+                            <div class="color-circle color-white" title="白色"></div>
+                        </div>
+                        <p><strong data-lang="product_colors">可选颜色:</strong> Black, White</p>
+                        <button class="btn view-details-btn" style="margin-top: 15px; width: 100%;" data-lang="product_view_details">查看详情</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 产品对比区域 -->
+    <section class="comparison-section" id="comparison">
+        <div class="container">
+            <div class="section-title">
+                <h2 data-lang="comparison_title">产品对比</h2>
+                <p data-lang="comparison_subtitle">比较我们的产品，选择最适合您的</p>
+            </div>
+            
+            <div class="comparison-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th data-lang="comparison_feature">特性</th>
+                            <th data-lang="product_n16_title">N16 手机</th>
+                            <th data-lang="product_n25_title">N25 手机</th>
+                            <th data-lang="product_ntc1_title">NTC1 充电宝</th>
+                            <th data-lang="product_ntc2_title">NTC2 充电宝</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td data-lang="comparison_price">价格范围</td>
+                            <td data-lang="comparison_n16_price">¥180,000 - ¥220,000</td>
+                            <td data-lang="comparison_n25_price">¥250,000 - ¥320,000</td>
+                            <td data-lang="comparison_ntc1_price">¥15,000 - ¥18,000</td>
+                            <td data-lang="comparison_ntc2_price">¥25,000 - ¥30,000</td>
+                        </tr>
+                        <tr>
+                            <td data-lang="comparison_colors">颜色选项</td>
+                            <td data-lang="comparison_n16_colors">黑色, 白色, 金色</td>
+                            <td data-lang="comparison_n25_colors">黑色, 白色, 灰色</td>
+                            <td data-lang="comparison_ntc1_colors">黑色, 白色</td>
+                            <td data-lang="comparison_ntc2_colors">黑色, 白色</td>
+                        </tr>
+                        <tr>
+                            <td data-lang="comparison_battery">电池/容量</td>
+                            <td data-lang="comparison_n16_battery">5000mAh</td>
+                            <td data-lang="comparison_n25_battery">5500mAh</td>
+                            <td>10000mAh</td>
+                            <td>20000mAh</td>
+                        </tr>
+                        <tr>
+                            <td data-lang="comparison_fastcharging">快充支持</td>
+                            <td><span class="feature-check" data-lang="comparison_yes">是</span></td>
+                            <td><span class="feature-check" data-lang="comparison_yes">是</span></td>
+                            <td><span class="feature-check" data-lang="comparison_yes">是</span></td>
+                            <td><span class="feature-check" data-lang="comparison_yes">是</span></td>
+                        </tr>
+                        <tr>
+                            <td data-lang="comparison_wirelesscharging">无线充电</td>
+                            <td><span class="feature-check" data-lang="comparison_yes">是</span></td>
+                            <td><span class="feature-check" data-lang="comparison_yes">是</span></td>
+                            <td><span class="feature-check" data-lang="comparison_yes">是</span></td>
+                            <td><span class="feature-check" data-lang="comparison_yes">是</span></td>
+                        </tr>
+                        <tr>
+                            <td data-lang="comparison_multidevice">多设备充电</td>
+                            <td><span class="feature-unavailable" data-lang="comparison_no">否</span></td>
+                            <td><span class="feature-unavailable" data-lang="comparison_no">否</td>
+                            <td><span class="feature-check" data-lang="comparison_yes">是</span></td>
+                            <td><span class="feature-check" data-lang="comparison_yes">是</span></td>
+                        </tr>
+                        <tr>
+                            <td data-lang="comparison_warranty">保修期</td>
+                            <td data-lang="comparison_n16_warranty">24个月</td>
+                            <td data-lang="comparison_n25_warranty">24个月</td>
+                            <td data-lang="comparison_ntc1_warranty">12个月</td>
+                            <td data-lang="comparison_ntc2_warranty">12个月</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div style="text-align: center;">
+                <a href="#contact" class="btn" data-lang="comparison_contact">咨询购买</a>
+                <button id="downloadComparison" class="btn btn-secondary" style="margin-left: 10px;" data-lang="comparison_download">下载对比表</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 客户评价区域 -->
+    <section class="testimonials-section" id="testimonials">
+        <div class="container">
+            <div class="section-title">
+                <h2 data-lang="testimonials_title">客户评价</h2>
+                <p data-lang="testimonials_subtitle">听听我们满意客户的心声</p>
+            </div>
+            
+            <div class="testimonials-container">
+                <div class="testimonial-card">
+                    <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text" data-lang="testimonial1_text">"N16手机的性能超出了我的预期，摄像头质量特别好，电池续航也很持久。强烈推荐！"</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <h4 data-lang="testimonial1_name">Adebayo Johnson</h4>
+                            <p data-lang="testimonial1_location">拉各斯</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <p class="testimonial-text" data-lang="testimonial2_text">"NTC2充电宝是我用过最好的充电宝，可以同时为我的手机、平板和笔记本充电，非常方便！"</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <h4 data-lang="testimonial2_name">Chioma Okonkwo</h4>
+                            <p data-lang="testimonial2_location">阿布贾</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text" data-lang="testimonial3_text">"NEXTECH的产品质量和服务都非常棒。我的N25手机使用体验完美，屏幕显示效果惊艳。"</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <h4 data-lang="testimonial3_name">Emeka Nwosu</h4>
+                            <p data-lang="testimonial3_location">伊巴丹</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 产品视频区域 -->
+    <section class="video-section" id="videos">
+        <div class="container">
+            <div class="section-title">
+                <h2 data-lang="videos_title">产品视频</h2>
+                <p data-lang="videos_subtitle">观看我们的产品介绍和使用教程</p>
+            </div>
+            
+            <div class="video-container">
+                <div class="video-card">
+                    <div class="video-placeholder" data-video="n16">
+                        <i class="fas fa-play-circle"></i>
+                    </div>
+                    <div class="video-info">
+                        <h3 data-lang="video_n16_title">N16 旗舰手机介绍</h3>
+                        <p data-lang="video_n16_desc">了解N16手机的特性和功能</p>
+                    </div>
+                </div>
+                
+                <div class="video-card">
+                    <div class="video-placeholder" data-video="n25">
+                        <i class="fas fa-play-circle"></i>
+                    </div>
+                    <div class="video-info">
+                        <h3 data-lang="video_n25_title">N25 旗舰手机评测</h3>
+                        <p data-lang="video_n25_desc">看看N25手机的实际表现</p>
+                    </div>
+                </div>
+                
+                <div class="video-card">
+                    <div class="video-placeholder" data-video="charging">
+                        <i class="fas fa-play-circle"></i>
+                    </div>
+                    <div class="video-info">
+                        <h3 data-lang="video_charging_title">NTC系列充电宝使用教程</h3>
+                        <p data-lang="video_charging_desc">学习如何高效使用我们的充电宝</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 公司地址区域 -->
+    <section class="address-section" id="address">
+        <div class="container">
+            <div class="section-title">
+                <h2 data-lang="address_title">公司地址</h2>
+            </div>
+            
+            <div class="address-container">
+                <div class="address-info">
+                    <h3 data-lang="address_visit">访问我们的实体店</h3>
+                    <div class="address-details">
+                        <p>
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span><strong data-lang="address_label">地址:</strong> <span data-lang="address_value">No 40 Wihu Avenue, beside ENYO FILLING station, by Kara bridge off Lagos-Ibadan expressway, Lagos Nigeria</span></span>
+                        </p>
+                        <p>
+                            <i class="fas fa-clock"></i>
+                            <span><strong data-lang="hours_label">营业时间:</strong> <span data-lang="hours_value">周一至周六: 9:00 AM - 7:00 PM<br>周日: 10:00 AM - 5:00 PM</span></span>
+                        </p>
+                        <p>
+                            <i class="fas fa-car"></i>
+                            <span><strong data-lang="parking_label">停车:</strong> <span data-lang="parking_value">店前有充足的停车位</span></span>
+                        </p>
+                        <p>
+                            <i class="fas fa-directions"></i>
+                            <span><strong data-lang="directions_label">交通指引:</strong> <span data-lang="directions_value">从拉各斯-伊巴丹高速公路卡拉桥出口下，ENYO加油站旁</span></span>
+                        </p>
+                    </div>
+                    <a href="https://maps.google.com/?q=No+40+Wihu+Avenue+beside+ENYO+FILLING+station+by+Kara+bridge+off+Lagos+ibadan+expressway+Lagos+Nigeria" target="_blank" class="btn" data-lang="address_navigation">获取导航路线</a>
+                </div>
+                
+                <div id="map"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 联系信息区域 -->
+    <section class="contact-section" id="contact">
+        <div class="container">
+            <div class="section-title">
+                <h2 data-lang="contact_title">联系我们</h2>
+            </div>
+            
+            <div class="contact-grid">
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fab fa-tiktok"></i>
+                    </div>
+                    <h3 data-lang="contact_tiktok">TikTok</h3>
+                    <p data-lang="contact_tiktok_desc">关注我们的TikTok账号，观看产品视频和使用教程</p>
+                    <p><strong data-lang="contact_account">账号：</strong>@nextech78</p>
+                    <a href="https://www.tiktok.com/@nextech78" target="_blank" class="btn" style="margin-top: 15px;" data-lang="contact_visit_tiktok">访问TikTok</a>
+                </div>
+                
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fab fa-facebook"></i>
+                    </div>
+                    <h3 data-lang="contact_facebook">Facebook</h3>
+                    <p data-lang="contact_facebook_desc">在Facebook上关注我们，获取最新产品和促销信息</p>
+                    <p><strong data-lang="contact_account">账号：</strong>Mobil NT</p>
+                    <a href="https://www.facebook.com/MobilNT" target="_blank" class="btn" style="margin-top: 15px;" data-lang="contact_visit_facebook">访问Facebook</a>
+                </div>
+                
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    <h3 data-lang="contact_whatsapp">WhatsApp</h3>
+                    <p data-lang="contact_whatsapp_desc">通过WhatsApp与我们联系，获取产品咨询和购买支持</p>
+                    <p><strong data-lang="contact_phone">电话：</strong>08108444311</p>
+                    <p><strong data-lang="contact_phone">电话：</strong>07079699982</p>
+                    <a href="https://wa.me/2348108444311" target="_blank" class="btn" style="margin-top: 15px;" data-lang="contact_send_message">发送消息</a>
+                </div>
+                
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fas fa-phone-alt"></i>
+                    </div>
+                    <h3 data-lang="contact_call">电话联系</h3>
+                    <p data-lang="contact_call_desc">直接致电我们，获取即时帮助和产品咨询</p>
+                    <p><strong data-lang="contact_phone1">电话1：</strong>08108444311</p>
+                    <p><strong data-lang="contact_phone2">电话2：</strong>07079699982</p>
+                    <a href="tel:+2348108444311" class="btn" style="margin-top: 15px;" data-lang="contact_call_now">拨打电话</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 新手教程区域 -->
+    <section class="tutorial-section" id="tutorial">
+        <div class="container">
+            <div class="section-title">
+                <h2 data-lang="tutorial_title">新手使用指南</h2>
+                <p data-lang="tutorial_subtitle">作为网站管理员，您可以按照以下步骤更新和管理网站内容</p>
+            </div>
+            
+            <div class="tutorial-box">
+                <h3 data-lang="tutorial_update">如何更新网站内容</h3>
+                
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <strong data-lang="tutorial_step1_title">更新产品信息</strong>
+                    <p data-lang="tutorial_step1_desc">要更新产品名称、描述或颜色，找到HTML文件中对应的产品卡片部分，修改文字内容即可。</p>
+                </div>
+                
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <strong data-lang="tutorial_step2_title">添加产品图片和视频</strong>
+                    <p data-lang="tutorial_step2_desc">将您提供的图片和视频文件上传到网站服务器的"images"和"videos"文件夹，然后在HTML代码中替换对应的图片URL和视频链接。</p>
+                </div>
+                
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <strong data-lang="tutorial_step3_title">更新联系信息和地址</strong>
+                    <p data-lang="tutorial_step3_desc">如果需要更改联系信息或地址，找到"联系我们"和"公司地址"部分，修改电话号码、地址等。</p>
+                </div>
+                
+                <div class="step">
+                    <span class="step-number">4</span>
+                    <strong data-lang="tutorial_step4_title">地图位置调整</strong>
+                    <p data-lang="tutorial_step4_desc">如果您需要精确显示公司位置，请将JavaScript部分的坐标调整为您的实际坐标。</p>
+                </div>
+                
+                <div class="step">
+                    <span class="step-number">5</span>
+                    <strong data-lang="tutorial_step5_title">网站发布</strong>
+                    <p data-lang="tutorial_step5_desc">将整个网站文件夹上传到网站托管服务（如GoDaddy、Bluehost或GitHub Pages）。如果您需要帮助，可以联系网站开发人员。</p>
+                </div>
+                
+                <div class="step">
+                    <span class="step-number">6</span>
+                    <strong data-lang="tutorial_step6_title">日常维护</strong>
+                    <p data-lang="tutorial_step6_desc">定期检查网站功能是否正常，确保所有链接有效。如需添加新产品，可以复制现有产品卡片代码并修改相应内容。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 产品详情模态框 -->
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle" data-lang="modal_product_details">产品详情</h2>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent">
+                    <!-- 动态内容会在这里显示 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 视频模态框 -->
+    <div class="video-modal" id="videoModal">
+        <div class="video-modal-content">
+            <button class="close-video-modal" id="closeVideoModal">&times;</button>
+            <video id="videoPlayer" controls>
+                <source src="" type="video/mp4">
+                <p data-lang="video_not_supported">您的浏览器不支持视频播放</p>
+            </video>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3 data-lang="footer_company">NEXTECH MOBILE LIMITED</h3>
+                    <p data-lang="footer_desc">我们致力于提供高质量的移动设备和配件，让科技改善您的生活。</p>
+                    <div class="social-links">
+                        <a href="https://www.tiktok.com/@nextech78" target="_blank"><i class="fab fa-tiktok"></i></a>
+                        <a href="https://www.facebook.com/MobilNT" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://wa.me/2348108444311" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3 data-lang="footer_contact">联系信息</h3>
+                    <p><i class="fas fa-phone-alt"></i> <span data-lang="footer_phones">电话: 08108444311 或 07079699982</span></p>
+                    <p><i class="fab fa-whatsapp"></i> <span data-lang="footer_whatsapp">WhatsApp: +234 810 844 4311</span></p>
+                    <p><i class="fab fa-tiktok"></i> <span data-lang="footer_tiktok">TikTok: @nextech78</span></p>
+                    <p><i class="fab fa-facebook"></i> <span data-lang="footer_facebook">Facebook: Mobil NT</span></p>
+                </div>
+                
+                <div class="footer-column">
+                    <h3 data-lang="footer_address">公司地址</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> <span data-lang="footer_address_value">No 40 Wihu Avenue,<br>beside ENYO FILLING station,<br>by Kara bridge off Lagos-Ibadan expressway,<br>Lagos Nigeria</span></p>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p data-lang="footer_copyright">&copy; 2023 NEXTECH MOBILE LIMITED. 保留所有权利。</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // 多语言支持
+        const translations = {
+            zh: {
+                // 导航
+                "nav_home": "首页",
+                "nav_products": "产品",
+                "nav_comparison": "产品对比",
+                "nav_testimonials": "客户评价",
+                "nav_videos": "产品视频",
+                "nav_address": "公司地址",
+                "nav_contact": "联系我们",
+                
+                // 英雄区域
+                "hero_title": "NEXTECH MOBILE LIMITED",
+                "hero_desc": "我们专注于提供高品质的旗舰手机和大容量充电宝。N16和N25旗舰手机带来卓越性能，NTC系列充电宝提供持久电力。",
+                "hero_btn_products": "查看产品",
+                "hero_btn_compare": "产品对比",
+                "hero_btn_videos": "观看视频",
+                
+                // 产品区域
+                "products_title": "我们的产品",
+                "product_badge_flagship": "旗舰款",
+                "product_badge_new": "新款",
+                "product_badge_portable": "便携",
+                "product_badge_highcapacity": "高容量",
+                "product_n16_title": "N16 旗舰手机",
+                "product_n16_desc": "高性能旗舰手机，配备顶级摄像头和长续航电池。",
+                "product_n25_title": "N25 旗舰手机",
+                "product_n25_desc": "下一代旗舰手机，更强大的处理器和超清显示屏。",
+                "product_ntc1_title": "NTC1 充电宝",
+                "product_ntc1_desc": "10000mA 大容量充电宝，轻便易携，支持快充。",
+                "product_ntc2_title": "NTC2 充电宝",
+                "product_ntc2_desc": "20000mA 超大容量充电宝，可为多个设备同时充电。",
+                "product_colors": "可选颜色:",
+                "product_view_details": "查看详情",
+                
+                // 产品对比区域
+                "comparison_title": "产品对比",
+                "comparison_subtitle": "比较我们的产品，选择最适合您的",
+                "comparison_feature": "特性",
+                "comparison_price": "价格范围",
+                "comparison_n16_price": "¥180,000 - ¥220,000",
+                "comparison_n25_price": "¥250,000 - ¥320,000",
+                "comparison_ntc1_price": "¥15,000 - ¥18,000",
+                "comparison_ntc2_price": "¥25,000 - ¥30,000",
+                "comparison_colors": "颜色选项",
+                "comparison_n16_colors": "黑色, 白色, 金色",
+                "comparison_n25_colors": "黑色, 白色, 灰色",
+                "comparison_ntc1_colors": "黑色, 白色",
+                "comparison_ntc2_colors": "黑色, 白色",
+                "comparison_battery": "电池/容量",
+                "comparison_n16_battery": "5000mAh",
+                "comparison_n25_battery": "5500mAh",
+                "comparison_fastcharging": "快充支持",
+                "comparison_wirelesscharging": "无线充电",
+                "comparison_multidevice": "多设备充电",
+                "comparison_warranty": "保修期",
+                "comparison_n16_warranty": "24个月",
+                "comparison_n25_warranty": "24个月",
+                "comparison_ntc1_warranty": "12个月",
+                "comparison_ntc2_warranty": "12个月",
+                "comparison_yes": "是",
+                "comparison_no": "否",
+                "comparison_contact": "咨询购买",
+                "comparison_download": "下载对比表",
+                
+                // 客户评价区域
+                "testimonials_title": "客户评价",
+                "testimonials_subtitle": "听听我们满意客户的心声",
+                "testimonial1_text": "\"N16手机的性能超出了我的预期，摄像头质量特别好，电池续航也很持久。强烈推荐！\"",
+                "testimonial1_name": "Adebayo Johnson",
+                "testimonial1_location": "拉各斯",
+                "testimonial2_text": "\"NTC2充电宝是我用过最好的充电宝，可以同时为我的手机、平板和笔记本充电，非常方便！\"",
+                "testimonial2_name": "Chioma Okonkwo",
+                "testimonial2_location": "阿布贾",
+                "testimonial3_text": "\"NEXTECH的产品质量和服务都非常棒。我的N25手机使用体验完美，屏幕显示效果惊艳。\"",
+                "testimonial3_name": "Emeka Nwosu",
+                "testimonial3_location": "伊巴丹",
+                
+                // 视频区域
+                "videos_title": "产品视频",
+                "videos_subtitle": "观看我们的产品介绍和使用教程",
+                "video_n16_title": "N16 旗舰手机介绍",
+                "video_n16_desc": "了解N16手机的特性和功能",
+                "video_n25_title": "N25 旗舰手机评测",
+                "video_n25_desc": "看看N25手机的实际表现",
+                "video_charging_title": "NTC系列充电宝使用教程",
+                "video_charging_desc": "学习如何高效使用我们的充电宝",
+                "video_not_supported": "您的浏览器不支持视频播放",
+                
+                // 地址区域
+                "address_title": "公司地址",
+                "address_visit": "访问我们的实体店",
+                "address_label": "地址:",
+                "address_value": "No 40 Wihu Avenue, beside ENYO FILLING station, by Kara bridge off Lagos-Ibadan expressway, Lagos Nigeria",
+                "hours_label": "营业时间:",
+                "hours_value": "周一至周六: 9:00 AM - 7:00 PM<br>周日: 10:00 AM - 5:00 PM",
+                "parking_label": "停车:",
+                "parking_value": "店前有充足的停车位",
+                "directions_label": "交通指引:",
+                "directions_value": "从拉各斯-伊巴丹高速公路卡拉桥出口下，ENYO加油站旁",
+                "address_navigation": "获取导航路线",
+                
+                // 联系区域
+                "contact_title": "联系我们",
+                "contact_tiktok": "TikTok",
+                "contact_tiktok_desc": "关注我们的TikTok账号，观看产品视频和使用教程",
+                "contact_facebook": "Facebook",
+                "contact_facebook_desc": "在Facebook上关注我们，获取最新产品和促销信息",
+                "contact_whatsapp": "WhatsApp",
+                "contact_whatsapp_desc": "通过WhatsApp与我们联系，获取产品咨询和购买支持",
+                "contact_call": "电话联系",
+                "contact_call_desc": "直接致电我们，获取即时帮助和产品咨询",
+                "contact_account": "账号：",
+                "contact_phone": "电话：",
+                "contact_phone1": "电话1：",
+                "contact_phone2": "电话2：",
+                "contact_visit_tiktok": "访问TikTok",
+                "contact_visit_facebook": "访问Facebook",
+                "contact_send_message": "发送消息",
+                "contact_call_now": "拨打电话",
+                
+                // 教程区域
+                "tutorial_title": "新手使用指南",
+                "tutorial_subtitle": "作为网站管理员，您可以按照以下步骤更新和管理网站内容",
+                "tutorial_update": "如何更新网站内容",
+                "tutorial_step1_title": "更新产品信息",
+                "tutorial_step1_desc": "要更新产品名称、描述或颜色，找到HTML文件中对应的产品卡片部分，修改文字内容即可。",
+                "tutorial_step2_title": "添加产品图片和视频",
+                "tutorial_step2_desc": "将您提供的图片和视频文件上传到网站服务器的'images'和'videos'文件夹，然后在HTML代码中替换对应的图片URL和视频链接。",
+                "tutorial_step3_title": "更新联系信息和地址",
+                "tutorial_step3_desc": "如果需要更改联系信息或地址，找到'联系我们'和'公司地址'部分，修改电话号码、地址等。",
+                "tutorial_step4_title": "地图位置调整",
+                "tutorial_step4_desc": "如果您需要精确显示公司位置，请将JavaScript部分的坐标调整为您的实际坐标。",
+                "tutorial_step5_title": "网站发布",
+                "tutorial_step5_desc": "将整个网站文件夹上传到网站托管服务（如GoDaddy、Bluehost或GitHub Pages）。如果您需要帮助，可以联系网站开发人员。",
+                "tutorial_step6_title": "日常维护",
+                "tutorial_step6_desc": "定期检查网站功能是否正常，确保所有链接有效。如需添加新产品，可以复制现有产品卡片代码并修改相应内容。",
+                
+                // 模态框
+                "modal_product_details": "产品详情",
+                
+                // 页脚
+                "footer_company": "NEXTECH MOBILE LIMITED",
+                "footer_desc": "我们致力于提供高质量的移动设备和配件，让科技改善您的生活。",
+                "footer_contact": "联系信息",
+                "footer_phones": "电话: 08108444311 或 07079699982",
+                "footer_whatsapp": "WhatsApp: +234 810 844 4311",
+                "footer_tiktok": "TikTok: @nextech78",
+                "footer_facebook": "Facebook: Mobil NT",
+                "footer_address": "公司地址",
+                "footer_address_value": "No 40 Wihu Avenue,<br>beside ENYO FILLING station,<br>by Kara bridge off Lagos-Ibadan expressway,<br>Lagos Nigeria",
+                "footer_copyright": "© 2023 NEXTECH MOBILE LIMITED. 保留所有权利。"
+            },
+            en: {
+                // 导航
+                "nav_home": "Home",
+                "nav_products": "Products",
+                "nav_comparison": "Product Comparison",
+                "nav_testimonials": "Testimonials",
+                "nav_videos": "Product Videos",
+                "nav_address": "Company Address",
+                "nav_contact": "Contact Us",
+                
+                // 英雄区域
+                "hero_title": "NEXTECH MOBILE LIMITED",
+                "hero_desc": "We specialize in providing high-quality flagship phones and high-capacity power banks. N16 and N25 flagship phones deliver excellent performance, and the NTC series power banks provide lasting power.",
+                "hero_btn_products": "View Products",
+                "hero_btn_compare": "Compare Products",
+                "hero_btn_videos": "Watch Videos",
+                
+                // 产品区域
+                "products_title": "Our Products",
+                "product_badge_flagship": "Flagship",
+                "product_badge_new": "New",
+                "product_badge_portable": "Portable",
+                "product_badge_highcapacity": "High Capacity",
+                "product_n16_title": "N16 Flagship Phone",
+                "product_n16_desc": "High-performance flagship phone with top-tier camera and long-lasting battery.",
+                "product_n25_title": "N25 Flagship Phone",
+                "product_n25_desc": "Next-generation flagship phone with more powerful processor and ultra-clear display.",
+                "product_ntc1_title": "NTC1 Power Bank",
+                "product_ntc1_desc": "10000mA high-capacity power bank, lightweight and portable, supports fast charging.",
+                "product_ntc2_title": "NTC2 Power Bank",
+                "product_ntc2_desc": "20000mA ultra-high capacity power bank, can charge multiple devices simultaneously.",
+                "product_colors": "Available Colors:",
+                "product_view_details": "View Details",
+                
+                // 产品对比区域
+                "comparison_title": "Product Comparison",
+                "comparison_subtitle": "Compare our products and choose the best one for you",
+                "comparison_feature": "Feature",
+                "comparison_price": "Price Range",
+                "comparison_n16_price": "¥180,000 - ¥220,000",
+                "comparison_n25_price": "¥250,000 - ¥320,000",
+                "comparison_ntc1_price": "¥15,000 - ¥18,000",
+                "comparison_ntc2_price": "¥25,000 - ¥30,000",
+                "comparison_colors": "Color Options",
+                "comparison_n16_colors": "Black, White, Gold",
+                "comparison_n25_colors": "Black, White, Grey",
+                "comparison_ntc1_colors": "Black, White",
+                "comparison_ntc2_colors": "Black, White",
+                "comparison_battery": "Battery/Capacity",
+                "comparison_n16_battery": "5000mAh",
+                "comparison_n25_battery": "5500mAh",
+                "comparison_fastcharging": "Fast Charging",
+                "comparison_wirelesscharging": "Wireless Charging",
+                "comparison_multidevice": "Multi-Device Charging",
+                "comparison_warranty": "Warranty Period",
+                "comparison_n16_warranty": "24 months",
+                "comparison_n25_warranty": "24 months",
+                "comparison_ntc1_warranty": "12 months",
+                "comparison_ntc2_warranty": "12 months",
+                "comparison_yes": "Yes",
+                "comparison_no": "No",
+                "comparison_contact": "Contact to Buy",
+                "comparison_download": "Download Comparison",
+                
+                // 客户评价区域
+                "testimonials_title": "Customer Testimonials",
+                "testimonials_subtitle": "Hear from our satisfied customers",
+                "testimonial1_text": "\"The performance of the N16 phone exceeded my expectations. The camera quality is particularly good, and the battery life is also long-lasting. Highly recommended!\"",
+                "testimonial1_name": "Adebayo Johnson",
+                "testimonial1_location": "Lagos",
+                "testimonial2_text": "\"The NTC2 power bank is the best power bank I've ever used. It can charge my phone, tablet, and laptop at the same time, very convenient!\"",
+                "testimonial2_name": "Chioma Okonkwo",
+                "testimonial2_location": "Abuja",
+                "testimonial3_text": "\"NEXTECH's product quality and service are excellent. My N25 phone experience is perfect, and the screen display is stunning.\"",
+                "testimonial3_name": "Emeka Nwosu",
+                "testimonial3_location": "Ibadan",
+                
+                // 视频区域
+                "videos_title": "Product Videos",
+                "videos_subtitle": "Watch our product introductions and tutorials",
+                "video_n16_title": "N16 Flagship Phone Introduction",
+                "video_n16_desc": "Learn about the features and functions of the N16 phone",
+                "video_n25_title": "N25 Flagship Phone Review",
+                "video_n25_desc": "See the actual performance of the N25 phone",
+                "video_charging_title": "NTC Series Power Bank Tutorial",
+                "video_charging_desc": "Learn how to use our power banks efficiently",
+                "video_not_supported": "Your browser does not support video playback",
+                
+                // 地址区域
+                "address_title": "Company Address",
+                "address_visit": "Visit Our Store",
+                "address_label": "Address:",
+                "address_value": "No 40 Wihu Avenue, beside ENYO FILLING station, by Kara bridge off Lagos-Ibadan expressway, Lagos Nigeria",
+                "hours_label": "Business Hours:",
+                "hours_value": "Monday to Saturday: 9:00 AM - 7:00 PM<br>Sunday: 10:00 AM - 5:00 PM",
+                "parking_label": "Parking:",
+                "parking_value": "Ample parking available in front of the store",
+                "directions_label": "Directions:",
+                "directions_value": "Exit at Kara bridge from Lagos-Ibadan expressway, beside ENYO filling station",
+                "address_navigation": "Get Directions",
+                
+                // 联系区域
+                "contact_title": "Contact Us",
+                "contact_tiktok": "TikTok",
+                "contact_tiktok_desc": "Follow our TikTok account to watch product videos and tutorials",
+                "contact_facebook": "Facebook",
+                "contact_facebook_desc": "Follow us on Facebook for the latest products and promotions",
+                "contact_whatsapp": "WhatsApp",
+                "contact_whatsapp_desc": "Contact us via WhatsApp for product inquiries and purchase support",
+                "contact_call": "Phone Call",
+                "contact_call_desc": "Call us directly for instant assistance and product inquiries",
+                "contact_account": "Account:",
+                "contact_phone": "Phone:",
+                "contact_phone1": "Phone 1:",
+                "contact_phone2": "Phone 2:",
+                "contact_visit_tiktok": "Visit TikTok",
+                "contact_visit_facebook": "Visit Facebook",
+                "contact_send_message": "Send Message",
+                "contact_call_now": "Call Now",
+                
+                // 教程区域
+                "tutorial_title": "Beginner's Guide",
+                "tutorial_subtitle": "As a website administrator, you can follow these steps to update and manage website content",
+                "tutorial_update": "How to Update Website Content",
+                "tutorial_step1_title": "Update Product Information",
+                "tutorial_step1_desc": "To update product names, descriptions, or colors, find the corresponding product card section in the HTML file and modify the text content.",
+                "tutorial_step2_title": "Add Product Pictures and Videos",
+                "tutorial_step2_desc": "Upload your provided image and video files to the 'images' and 'videos' folders on the website server, then replace the corresponding image URLs and video links in the HTML code.",
+                "tutorial_step3_title": "Update Contact Information and Address",
+                "tutorial_step3_desc": "If you need to change contact information or address, find the 'Contact Us' and 'Company Address' sections and modify phone numbers, address, etc.",
+                "tutorial_step4_title": "Map Location Adjustment",
+                "tutorial_step4_desc": "If you need to accurately display the company location, adjust the coordinates in the JavaScript section to your actual coordinates.",
+                "tutorial_step5_title": "Website Publishing",
+                "tutorial_step5_desc": "Upload the entire website folder to a web hosting service (such as GoDaddy, Bluehost, or GitHub Pages). If you need help, you can contact the website developer.",
+                "tutorial_step6_title": "Daily Maintenance",
+                "tutorial_step6_desc": "Regularly check that website functions are working properly and ensure all links are valid. To add new products, you can copy existing product card code and modify the corresponding content.",
+                
+                // 模态框
+                "modal_product_details": "Product Details",
+                
+                // 页脚
+                "footer_company": "NEXTECH MOBILE LIMITED",
+                "footer_desc": "We are committed to providing high-quality mobile devices and accessories to improve your life with technology.",
+                "footer_contact": "Contact Information",
+                "footer_phones": "Phone: 08108444311 or 07079699982",
+                "footer_whatsapp": "WhatsApp: +234 810 844 4311",
+                "footer_tiktok": "TikTok: @nextech78",
+                "footer_facebook": "Facebook: Mobil NT",
+                "footer_address": "Company Address",
+                "footer_address_value": "No 40 Wihu Avenue,<br>beside ENYO FILLING station,<br>by Kara bridge off Lagos-Ibadan expressway,<br>Lagos Nigeria",
+                "footer_copyright": "© 2023 NEXTECH MOBILE LIMITED. All rights reserved."
+            }
+        };
+        
+        // 当前语言
+        let currentLang = 'zh';
+        
+        // 切换语言函数
+        function switchLanguage(lang) {
+            currentLang = lang;
+            
+            // 更新所有带有data-lang属性的元素
+            document.querySelectorAll('[data-lang]').forEach(element => {
+                const key = element.getAttribute('data-lang');
+                if (translations[lang] && translations[lang][key]) {
+                    if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                        element.value = translations[lang][key];
+                    } else {
+                        element.innerHTML = translations[lang][key];
+                    }
+                }
+            });
+            
+            // 更新语言按钮状态
+            document.getElementById('langCn').classList.toggle('active', lang === 'zh');
+            document.getElementById('langEn').classList.toggle('active', lang === 'en');
+            
+            // 更新页面标题
+            if (lang === 'en') {
+                document.title = "NEXTECH MOBILE LIMITED | Flagship Phones & Power Banks | High-Quality Mobile Devices";
+            } else {
+                document.title = "NEXTECH MOBILE LIMITED | 旗舰手机与充电宝 | 高品质移动设备";
+            }
+            
+            // 显示语言切换提示
+            const indicator = document.getElementById('langIndicator');
+            indicator.textContent = lang === 'zh' ? '已切换到中文' : 'Switched to English';
+            indicator.classList.add('show');
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 3000);
+            
+            // 保存语言选择到本地存储
+            localStorage.setItem('preferredLanguage', lang);
+        }
+        
+        // 移动端菜单切换
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mainNav = document.getElementById('mainNav');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mainNav.classList.toggle('active');
+            mobileMenuBtn.innerHTML = mainNav.classList.contains('active') 
+                ? '<i class="fas fa-times"></i>' 
+                : '<i class="fas fa-bars"></i>';
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if(targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if(targetElement) {
+                    // 关闭移动菜单
+                    mainNav.classList.remove('active');
+                    mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                    
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // 初始化地图
+        function initMap() {
+            // 拉各斯的大致坐标（您可以根据需要调整）
+            const companyLocation = [6.5244, 3.3792];
+            
+            // 创建地图
+            const map = L.map('map').setView(companyLocation, 14);
+            
+            // 添加地图图层
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+            
+            // 添加标记
+            const marker = L.marker(companyLocation).addTo(map);
+            marker.bindPopup("<b>NEXTECH MOBILE LIMITED</b><br>No 40 Wihu Avenue<br>beside ENYO FILLING station").openPopup();
+            
+            // 添加圆形区域
+            L.circle(companyLocation, {
+                color: '#3498db',
+                fillColor: '#3498db',
+                fillOpacity: 0.2,
+                radius: 500
+            }).addTo(map);
+        }
+        
+        // 页面加载完成后初始化
+        window.addEventListener('load', function() {
+            initMap();
+            
+            // 检查本地存储中的语言偏好
+            const savedLang = localStorage.getItem('preferredLanguage');
+            if (savedLang && (savedLang === 'zh' || savedLang === 'en')) {
+                switchLanguage(savedLang);
+            }
+            
+            // 添加淡入效果
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.5s';
+            
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+        
+        // 语言切换按钮事件
+        document.getElementById('langCn').addEventListener('click', () => {
+            switchLanguage('zh');
+        });
+        
+        document.getElementById('langEn').addEventListener('click', () => {
+            switchLanguage('en');
+        });
+        
+        // 产品详情模态框
+        const viewDetailsBtns = document.querySelectorAll('.view-details-btn');
+        const productModal = document.getElementById('productModal');
+        const closeModal = document.getElementById('closeModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalContent = document.getElementById('modalContent');
+        
+        // 产品详细信息
+        const productDetails = {
+            n16: {
+                title: {
+                    zh: "N16 旗舰手机",
+                    en: "N16 Flagship Phone"
+                },
+                description: {
+                    zh: "N16旗舰手机采用最新处理器，配备6.7英寸AMOLED显示屏，支持120Hz刷新率。后置三摄系统，主摄像头为108MP，支持8K视频录制。电池容量5000mAh，支持65W快充。",
+                    en: "The N16 flagship phone uses the latest processor, equipped with a 6.7-inch AMOLED display with 120Hz refresh rate. It has a triple rear camera system with a 108MP main camera that supports 8K video recording. Battery capacity is 5000mAh with 65W fast charging support."
+                },
+                colors: {
+                    zh: ["黑色", "白色", "金色"],
+                    en: ["Black", "White", "Gold"]
+                },
+                features: {
+                    zh: ["6.7英寸AMOLED显示屏", "108MP主摄像头", "5000mAh电池", "65W快充", "256GB存储", "12GB内存"],
+                    en: ["6.7-inch AMOLED display", "108MP main camera", "5000mAh battery", "65W fast charging", "256GB storage", "12GB RAM"]
+                },
+                images: ["n16_black.jpg", "n16_white.jpg", "n16_gold.jpg"],
+                videoUrl: "videos/n16_intro.mp4"
+            },
+            n25: {
+                title: {
+                    zh: "N25 旗舰手机",
+                    en: "N25 Flagship Phone"
+                },
+                description: {
+                    zh: "N25是下一代旗舰手机，搭载更强大的处理器和7.1英寸Dynamic AMOLED 2X显示屏。配备200MP主摄像头和50MP超广角摄像头，支持100倍空间变焦。电池容量5500mAh，支持100W快充和50W无线充电。",
+                    en: "The N25 is the next-generation flagship phone with a more powerful processor and 7.1-inch Dynamic AMOLED 2X display. It features a 200MP main camera and 50MP ultra-wide camera with 100x space zoom support. Battery capacity is 5500mAh with 100W fast charging and 50W wireless charging."
+                },
+                colors: {
+                    zh: ["黑色", "白色", "灰色"],
+                    en: ["Black", "White", "Grey"]
+                },
+                features: {
+                    zh: ["7.1英寸Dynamic AMOLED 2X", "200MP主摄像头", "5500mAh电池", "100W快充", "512GB/1TB存储", "16GB内存"],
+                    en: ["7.1-inch Dynamic AMOLED 2X", "200MP main camera", "5500mAh battery", "100W fast charging", "512GB/1TB storage", "16GB RAM"]
+                },
+                images: ["n25_black.jpg", "n25_white.jpg", "n25_grey.jpg"],
+                videoUrl: "videos/n25_review.mp4"
+            },
+            ntc1: {
+                title: {
+                    zh: "NTC1 充电宝 (10000mA)",
+                    en: "NTC1 Power Bank (10000mA)"
+                },
+                description: {
+                    zh: "NTC1充电宝容量为10000mAh，轻巧便携，支持18W快充和无线充电。可为iPhone充电3-4次，为安卓手机充电2-3次。配备USB-C和USB-A接口，支持同时为两台设备充电。",
+                    en: "The NTC1 power bank has a capacity of 10000mAh, lightweight and portable, supports 18W fast charging and wireless charging. It can charge an iPhone 3-4 times or an Android phone 2-3 times. Equipped with USB-C and USB-A ports, it supports charging two devices simultaneously."
+                },
+                colors: {
+                    zh: ["黑色", "白色"],
+                    en: ["Black", "White"]
+                },
+                features: {
+                    zh: ["10000mAh容量", "18W快充", "无线充电", "双输出接口", "轻巧设计", "LED电量显示"],
+                    en: ["10000mAh capacity", "18W fast charging", "Wireless charging", "Dual output ports", "Lightweight design", "LED power display"]
+                },
+                images: ["ntc1_black.jpg", "ntc1_white.jpg"],
+                videoUrl: "videos/charging_tutorial.mp4"
+            },
+            ntc2: {
+                title: {
+                    zh: "NTC2 充电宝 (20000mA)",
+                    en: "NTC2 Power Bank (20000mA)"
+                },
+                description: {
+                    zh: "NTC2充电宝容量为20000mAh，支持45W快充和15W无线充电。可为笔记本电脑、平板和手机充电。配备USB-C PD接口和两个USB-A接口，支持同时为三台设备充电。",
+                    en: "The NTC2 power bank has a capacity of 20000mAh, supports 45W fast charging and 15W wireless charging. It can charge laptops, tablets, and phones. Equipped with a USB-C PD port and two USB-A ports, it supports charging three devices simultaneously."
+                },
+                colors: {
+                    zh: ["黑色", "白色"],
+                    en: ["Black", "White"]
+                },
+                features: {
+                    zh: ["20000mAh容量", "45W快充", "无线充电", "三输出接口", "可为笔记本充电", "数字电量显示"],
+                    en: ["20000mAh capacity", "45W fast charging", "Wireless charging", "Three output ports", "Can charge laptops", "Digital power display"]
+                },
+                images: ["ntc2_black.jpg", "ntc2_white.jpg"],
+                videoUrl: "videos/charging_tutorial.mp4"
+            }
+        };
+        
+        // 为每个产品详情按钮添加点击事件
+        viewDetailsBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const productCard = this.closest('.product-card');
+                const productId = productCard.getAttribute('data-product');
+                const product = productDetails[productId];
+                
+                if(product) {
+                    modalTitle.textContent = product.title[currentLang];
+                    
+                    // 构建模态框内容
+                    let contentHtml = `
+                        <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 20px;">
+                            <div style="flex: 1; min-width: 300px;">
+                                <div style="background-color: #f5f5f5; height: 250px; display: flex; align-items: center; justify-content: center; border-radius: 10px; margin-bottom: 20px;">
+                                    <i class="fas fa-${productId.includes('n1') || productId.includes('n2') ? 'mobile-alt' : 'battery-full'}" style="font-size: 80px; color: #ccc;"></i>
+                                </div>
+                                <p><strong>${currentLang === 'zh' ? '提示：' : 'Tip:'}</strong> ${currentLang === 'zh' ? '将您的产品图片命名为 ' : 'Name your product images as '} <code>${product.images.join(', ')}</code> ${currentLang === 'zh' ? '并放入images文件夹，即可在此处显示。' : 'and put them in the images folder to display here.'}</p>
+                            </div>
+                            <div style="flex: 1; min-width: 300px;">
+                                <h3 style="color: #2c3e50; margin-bottom: 15px;">${currentLang === 'zh' ? '产品描述' : 'Product Description'}</h3>
+                                <p style="margin-bottom: 20px;">${product.description[currentLang]}</p>
+                                
+                                <h3 style="color: #2c3e50; margin-bottom: 15px;">${currentLang === 'zh' ? '可选颜色' : 'Available Colors'}</h3>
+                                <div style="display: flex; margin-bottom: 20px;">
+                                    ${product.colors[currentLang].map(color => `<div style="margin-right: 10px; padding: 5px 15px; background-color: #eee; border-radius: 20px;">${color}</div>`).join('')}
+                                </div>
+                                
+                                <h3 style="color: #2c3e50; margin-bottom: 15px;">${currentLang === 'zh' ? '主要特性' : 'Key Features'}</h3>
+                                <ul style="padding-left: 20px; margin-bottom: 20px;">
+                                    ${product.features[currentLang].map(feature => `<li>${feature}</li>`).join('')}
+                                </ul>
+                                
+                                <div style="display: flex; gap: 10px; margin-top: 30px;">
+                                    <a href="#contact" class="btn" onclick="productModal.classList.remove('active')">${currentLang === 'zh' ? '联系我们购买' : 'Contact Us to Buy'}</a>
+                                    <button class="btn btn-secondary" style="background-color: #3498db;" onclick="playProductVideo('${productId}')">${currentLang === 'zh' ? '观看产品视频' : 'Watch Product Video'}</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    modalContent.innerHTML = contentHtml;
+                    productModal.classList.add('active');
+                }
+            });
+        });
+        
+        // 关闭模态框
+        closeModal.addEventListener('click', () => {
+            productModal.classList.remove('active');
+        });
+        
+        // 点击模态框外部关闭
+        productModal.addEventListener('click', (e) => {
+            if(e.target === productModal) {
+                productModal.classList.remove('active');
+            }
+        });
+        
+        // 视频播放功能
+        const videoModal = document.getElementById('videoModal');
+        const closeVideoModal = document.getElementById('closeVideoModal');
+        const videoPlayer = document.getElementById('videoPlayer');
+        
+        // 视频数据
+        const videoData = {
+            n16: {
+                title: "N16 旗舰手机介绍",
+                url: "videos/n16_intro.mp4"
+            },
+            n25: {
+                title: "N25 旗舰手机评测",
+                url: "videos/n25_review.mp4"
+            },
+            charging: {
+                title: "NTC系列充电宝使用教程",
+                url: "videos/charging_tutorial.mp4"
+            }
+        };
+        
+        // 播放产品视频函数
+        function playProductVideo(productId) {
+            const video = productDetails[productId]?.videoUrl || "videos/default.mp4";
+            videoPlayer.src = video;
+            videoModal.classList.add('active');
+            productModal.classList.remove('active');
+            videoPlayer.play();
+        }
+        
+        // 视频卡片点击事件
+        document.querySelectorAll('.video-placeholder').forEach(placeholder => {
+            placeholder.addEventListener('click', function() {
+                const videoId = this.getAttribute('data-video');
+                const video = videoData[videoId] || videoData.n16;
+                videoPlayer.src = video.url;
+                videoModal.classList.add('active');
+                videoPlayer.play();
+            });
+        });
+        
+        // 关闭视频模态框
+        closeVideoModal.addEventListener('click', () => {
+            videoModal.classList.remove('active');
+            videoPlayer.pause();
+        });
+        
+        // 点击视频模态框外部关闭
+        videoModal.addEventListener('click', (e) => {
+            if(e.target === videoModal) {
+                videoModal.classList.remove('active');
+                videoPlayer.pause();
+            }
+        });
+        
+        // 下载对比表功能
+        document.getElementById('downloadComparison').addEventListener('click', function() {
+            const table = document.querySelector('.comparison-table table');
+            let csv = [];
+            
+            // 获取表头
+            const headers = [];
+            table.querySelectorAll('thead th').forEach(th => {
+                headers.push(th.textContent);
+            });
+            csv.push(headers.join(','));
+            
+            // 获取表格内容
+            table.querySelectorAll('tbody tr').forEach(tr => {
+                const row = [];
+                tr.querySelectorAll('td').forEach(td => {
+                    row.push(td.textContent);
+                });
+                csv.push(row.join(','));
+            });
+            
+            // 创建下载链接
+            const csvContent = csv.join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'nextech-products-comparison.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            // 显示下载成功提示
+            alert(currentLang === 'zh' ? '对比表已下载为CSV文件' : 'Comparison table downloaded as CSV file');
+        });
+        
+        // 初始化页面滚动效果
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if(window.scrollY > 100) {
+                header.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
+            } else {
+                header.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
+            }
+        });
+    </script>
+</body>
+</html>
